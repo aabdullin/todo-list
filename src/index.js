@@ -100,10 +100,11 @@ function ViewTodos() {
         value={todo}
         onChange={(e) => setTodo(e.target.value)}
         onKeyPress={(e) => {
-          if (e.keyCode === 13) {
+          if (e.key === "Enter") {
             addTodo({
               description: todo,
             });
+            setTodo("");
           }
         }}
       />
