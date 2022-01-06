@@ -1,156 +1,131 @@
-import React, { createContext, useContext, useReducer, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
+import useAxios from "axios-hooks";
+import "./index.css";
 
-// const fakeData = [
-//   {
-//     id: 1,
-//     description: "cleaning",
-//   },
-//   {
-//     id: 1,
-//     description: "laundry",
-//   },
-//   {
-//     id: 1,
-//     description: "cooking",
-//   },
-//   {
-//     id: 1,
-//     description: "coding preparation",
-//   },
-// ];
+import Modal from "react-modal";
 
-const todoContext = createContext({
-  todos: [],
-  addTodo: () => {},
-  editTodo: () => {},
-});
-const TodoProvider = ({ children }) => {
-  function todoReducer(state, action) {
-    console.log(state);
-    console.log(action);
-    switch (action.type) {
-      case "add":
-        return {
-          todos: [
-            {
-              ...action.todo,
-              id: state.todos.length + 1,
-            },
-            ...state.todos,
-          ],
-        };
-      case "edit":
-        return {
-          todos: state.todos.map((u) => {
-            if (u.id === action.todo.id) {
-              return action.todo;
-            }
-
-            return u;
-          }),
-        };
-      case "reset":
-        return {
-          keys: "",
-        };
-      default:
-        throw new Error();
-    }
-  }
-  const [todosState, todosDispatch] = useReducer(todoReducer, { todos: [] });
-
-  const addTodo = (todo) => {
-    todosDispatch({ type: "add", todo });
-  };
-
-  const editTodo = (todo) => {
-    todosDispatch({ type: "edit", todo });
-  };
-
-  return (
-    <todoContext.Provider
-      value={{
-        todos: [...todosState.todos],
-        addTodo,
-        editTodo,
-      }}
-    >
-      {children}
-    </todoContext.Provider>
-  );
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+  },
 };
 
-const useTodos = () => {
-  const context = useContext(todoContext);
-  if (context === undefined) {
-    throw new Error("useTodos must be used within a UsersProvider");
-  }
-  return context;
-};
+// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
+// Modal.setAppElement("#yourAppElement");
 
-function ViewTodos() {
-  const { todos, addTodo } = useTodos();
-  const [todo, setTodo] = useState("");
+function App() {
+  let subtitle;
+  const [modalIsOpen, setIsOpen] = React.useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = "#f00";
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
   return (
-    <>
-      <input
-        type="text"
-        name="todo"
-        value={todo}
-        onChange={(e) => setTodo(e.target.value)}
-        onKeyPress={(e) => {
-          if (e.key === "Enter") {
-            addTodo({
-              description: todo,
-            });
-            setTodo("");
-          }
-        }}
-      />
-      <ul>
-        Todo List:
-        {todos.map((todo) => (
-          <li key={todo.id}>
-            {todo.id} {todo.description}
-          </li>
-        ))}
-      </ul>
-    </>
+    <div>
+      <button onClick={openModal}>Open Modal</button>
+      <Modal
+        isOpen={modalIsOpen}
+        onAfterOpen={afterOpenModal}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >
+        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
+        <button onClick={closeModal}>close</button>
+        <div>I am a modal</div>
+        <form>
+          <input />
+          <button>tab navigation</button>
+          <button>stays</button>
+          <button>inside</button>
+          <button>the modal</button>
+        </form>
+      </Modal>
+    </div>
   );
 }
 
-// function ToDoList({ }) {
-//   return (
-//     <ul>
-//       Todo List:
-//       {todoItems.map((todo) => (
-//         <li key={todo.id}>
-//           {todo.id} {todo.description}
-//         </li>
-//       ))}
-//     </ul>
-//   );
-// }
+const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
+  let pageNumbers = [];
+  for (let i = 0; i < totalPages; i++) {
+    pageNumbers.push(i + 1);
+  }
+  // const pageNumbers = new Array(totalPages)
+  //   .fill()
+  //   .map((item, index) => index + 1);
+  return (
+    <div>
+      <button>&lt;&lt;</button>
+      <button>&lt;</button>
+      {pageNumbers.map((pageNumber) => (
+        <button onClick={() => setCurrentPage(pageNumber)}>{pageNumber}</button>
+      ))}
+      <button>&gt;</button>
+      <button>&gt;&gt;</button>
+    </div>
+  );
+};
 
-// function ToDoList1({ todoItems }) {
-//   return (
-//     <ul>
-//       {todoItems.map((todo) => {
-//         console.log(todo);
-//         return (
-//           <li key={todo.id}>
-//             {todo.id} {todo.description}
-//           </li>
-//         );
-//       })}
-//     </ul>
-//   );
-// }
+const ProfileCard = () => {};
 
-ReactDOM.render(
-  <TodoProvider>
-    <ViewTodos />
-  </TodoProvider>,
-  document.querySelector("#root")
-);
+const UserCard = (props) => {
+  console.log(props);
+  const { key, value } = props;
+  return (
+    <span className="border">
+      {key} {value.first_name} {value.last_name}
+      {value.email}
+    </span>
+  );
+};
+
+const UserList = () => {
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [{ data, loading, error }] = useAxios(
+    `https://reqres.in/api/users?page=${currentPage}&per_page=4`
+  );
+
+  console.log(data);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error!</p>;
+  console.log(data);
+
+  return (
+    <div className="d-flex flex-row">
+      <input
+        type="text"
+        name="name"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      {data.data.map((item) => {
+        return <UserCard key={item.id} value={item} />;
+      })}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={data.total_pages}
+        setCurrentPage={setCurrentPage}
+      />
+    </div>
+  );
+};
+
+ReactDOM.render(<UserList />, document.querySelector("#root"));
