@@ -17,7 +17,8 @@ function JobList(items) {
   return (
     <div>
       {items.map((item) => {
-        return <JobCard key={item.key} value={item} />;
+        // return <JobCard key={item.key} value={item} />;
+        console.log(items);
       })}
     </div>
   );
