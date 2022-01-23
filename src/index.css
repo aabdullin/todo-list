@@ -1,5 +1,47 @@
-.border {
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  background-image: url("./images/bg-header-desktop.svg");
+  height: 100px;
+  background-repeat: repeat-y;
+  background-color: hsl(0, 0%, 11%);
+}
+
+.job-list {
+  width: 100%;
+}
+
+.new-job {
+  background-color: hsl(180, 29%, 50%);
+  color: #fff;
+  padding: 5px;
+  font-size: 12px;
+  border-radius: 5px;
+  width: 70px;
+}
+
+.featured-job {
+  background-color: hsl(180, 8%, 52%);
+  color: #fff;
+  padding: 5px;
+  font-size: 12px;
+  border-radius: 5px;
+  width: 70px;
+}
+
+.company span {
+  margin-right: 10px;
+}
+
+.job {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   margin: 5px;
+}
+
+.tags {
+  margin-left: 0px;
 }
