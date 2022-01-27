@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { items } from "./db.js";
 
 function JobCard(props) {
-  const { key, value } = props;
+  const { key, value, setTags, tags } = props;
   console.log(props);
   return (
-    <div className="job">
+    <div key={key} className="job">
       <div className="one">
         <div className="company">
           <span>{value.name}</span>
@@ -18,30 +18,97 @@ function JobCard(props) {
         <div className="meta-info"></div>
         {value.date} {value.type} {value.location}
       </div>
-      <div className="tags">{value.tags}</div>
+      <div className="tags">
+        {value.tags.map((tag) => {
+          return (
+            <a
+              href="#"
+              key={tag}
+              className="tag"
+              onClick={() => {
+                if (tags.includes(tag)) return;
+                setTags([...tags, tag]);
+              }}
+            >
+              {tag}
+            </a>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
+const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
+  let pageNumbers = [];
+  for (let i = 0; i < totalPages; i++) {
+    pageNumbers.push(i + 1);
+  }
+  return (
+    <div>
+      <button>&lt;&lt;</button>
+      <button>&lt;</button>
+      {pageNumbers.map((pageNumber) => (
+        <button onClick={() => setCurrentPage(pageNumber)}>{pageNumber}</button>
+      ))}
+      <button>&gt;</button>
+      <button>&gt;&gt;</button>
+    </div>
+  );
+};
+
 function JobList({ items }) {
   const [search, setSearch] = useState("");
+  const [tags, setTags] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   return (
     <div>
       <div className="header"></div>
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      ></input>
+      <div>
+        {tags.map((tag) => {
+          return (
+            <a
+              href="#"
+              key={tag}
+              className="tag"
+              onClick={() => {
+                const filteredTags = tags.filter((oneTag) => {
+                  return oneTag !== tag;
+                });
+                setTags(filteredTags);
+                //filter
+                //set the tags
+                //setTags([...tags, tag]);
+              }}
+            >
+              {tag}
+            </a>
+          );
+        })}
+      </div>
       <div className="job-list">
         {items
           .filter((item) => {
-            return item.name.startsWith(search);
+            if (tags.length === 0) return true;
+            return item.tags.some((tag) => tags.includes(tag));
+            // return item.tags.startsWith(search);
           })
           .map((item) => {
-            return <JobCard key={item.key} value={item} />;
+            return (
+              <JobCard
+                key={item.key}
+                value={item}
+                setTags={setTags}
+                tags={tags}
+              />
+            );
           })}
       </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages="4"
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
 }

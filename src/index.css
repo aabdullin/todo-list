@@ -45,3 +45,7 @@ body {
 .tags {
   margin-left: 0px;
 }
+
+.tag {
+  padding-right: 10px;
+}
