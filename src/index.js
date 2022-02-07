@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ReactPaginate from "react-paginate";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { items } from "./db.js";
@@ -76,9 +77,6 @@ function JobList({ items }) {
                   return oneTag !== tag;
                 });
                 setTags(filteredTags);
-                //filter
-                //set the tags
-                //setTags([...tags, tag]);
               }}
             >
               {tag}
@@ -91,7 +89,6 @@ function JobList({ items }) {
           .filter((item) => {
             if (tags.length === 0) return true;
             return item.tags.some((tag) => tags.includes(tag));
-            // return item.tags.startsWith(search);
           })
           .map((item) => {
             return (
@@ -103,12 +100,12 @@ function JobList({ items }) {
               />
             );
           })}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={4}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
-      <Pagination
-        currentPage={currentPage}
-        totalPages="4"
-        setCurrentPage={setCurrentPage}
-      />
     </div>
   );
 }
