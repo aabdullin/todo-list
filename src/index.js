@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
 import ReactDOM from "react-dom";
 import "./index.css";
@@ -40,23 +40,46 @@ function JobCard(props) {
   );
 }
 
-const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
-  let pageNumbers = [];
-  for (let i = 0; i < totalPages; i++) {
-    pageNumbers.push(i + 1);
-  }
+function PaginatedItems({ itemsPerPage }) {
+  // We start with an empty list of items.
+  const [currentItems, setCurrentItems] = useState(null);
+  const [pageCount, setPageCount] = useState(0);
+  // Here we use item offsets; we could also use page offsets
+  // following the API or data you're working with.
+  const [itemOffset, setItemOffset] = useState(0);
+
+  useEffect(() => {
+    // Fetch items from another resources.
+    const endOffset = itemOffset + itemsPerPage;
+    console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+    setCurrentItems(items.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(items.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage]);
+
+  // Invoke when user click to request another page.
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % items.length;
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`
+    );
+    setItemOffset(newOffset);
+  };
+
   return (
-    <div>
-      <button>&lt;&lt;</button>
-      <button>&lt;</button>
-      {pageNumbers.map((pageNumber) => (
-        <button onClick={() => setCurrentPage(pageNumber)}>{pageNumber}</button>
-      ))}
-      <button>&gt;</button>
-      <button>&gt;&gt;</button>
-    </div>
+    <>
+      <Items currentItems={currentItems} />
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel="next >"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={5}
+        pageCount={pageCount}
+        previousLabel="< previous"
+        renderOnZeroPageCount={null}
+      />
+    </>
   );
-};
+}
 
 function JobList({ items }) {
   const [search, setSearch] = useState("");
@@ -100,11 +123,6 @@ function JobList({ items }) {
               />
             );
           })}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={4}
-          setCurrentPage={setCurrentPage}
-        />
       </div>
     </div>
   );
