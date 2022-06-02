@@ -1,0 +1,122 @@
+.section__crypto {
+    width: 100%;
+}
+
+.section__crypto svg {
+    width: 100%;
+    padding: 2rem;
+}
+
+.section__crypto polygon {
+  fill: #13131b;
+} 
+
+.section__crypto polyline {
+  stroke-width: 1.5;
+  fill: none;
+}
+
+.section__crypto h1 {
+    font-size: 3rem;
+    letter-spacing: 1rem;
+    text-transform: uppercase;
+    text-align: center;
+    color: #fff;
+}
+
+.section__crypto--cards {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.section__crypto--card {
+    margin: 1rem;
+    height: 35rem;
+    width: 28rem;
+    border-radius: 5px; 
+    background-color: #13131b;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    transition: all .5s;
+}
+
+.section__crypto--card:hover {
+    transform: scale(1.05);
+}
+
+.section__crypto--card-header {
+    height: 30%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.section__crypto--card-image {
+    display: block;
+    margin: 3rem;
+    height: 50%;
+}
+
+.section__crypto--card h2 {
+    font-size: 1.6rem;
+    text-transform: uppercase !important;
+    padding: 3rem;
+    letter-spacing: .5rem;
+}
+
+.section__crypto--card-list {
+    margin-top: 2.5rem;
+    padding: 0 3rem;
+    list-style: none;
+    font-size: 1.6rem;
+    letter-spacing: .2rem;
+}
+
+@media only screen and (max-width: 75em) {
+    .section__crypto--card {
+        width: 25rem;
+        margin: 2.5rem 1rem;
+    }
+    
+     .section__crypto--card-image {
+        margin: 2rem;
+        height: 40%;
+    }
+    
+    .section__crypto--card h2 {
+        padding: 2rem;
+        letter-spacing: .4rem;
+    }
+}
+
+ @media only screen and (max-width: 56.25em) {
+      .section__crypto--card {
+        width: 24rem;
+        margin: 3rem 2rem;
+    }
+ }
+
+@media only screen and (max-width: 37.5em) {
+    .section__crypto--card-header {
+        height: 15%;
+    }
+    
+    .section__crypto--card {
+        width: 23rem;
+        margin: 1.5rem .8rem;
+    }
+    
+    .section__crypto--card-image {
+        margin: 1.5rem;
+        height: 40%;
+    }
+    
+    .section__crypto--card h2 {
+        padding: 1.5rem;
+        letter-spacing: .3rem;
+    }
+    
+  }
